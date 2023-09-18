@@ -1,6 +1,12 @@
-<?php 
+<?php
+
+declare(strict_types=1);
+
+namespace SerpApi;
 
 // Exception
+use Exception;
+
 class SerpApiSearchException extends Exception {}
 
 /***
@@ -161,7 +167,7 @@ class AppleStoreAppSearch extends SerpApiSearch {
 }
 
 /***
- * NaverSearch engine 
+ * NaverSearch engine
  * @see https://serpapi.com/naver-search-api
  */
 class NaverSearch extends SerpApiSearch {
@@ -200,14 +206,14 @@ class SerpApiSearch {
       $this->api_key = $api_key;
     }
   }
-  
+
   public function set_serp_api_key($api_key) {
     if($api_key == NULL)
       throw new SerpApiSearchException("serp_api_key must have a value");
     $this->api_key = $api_key;
   }
     /***
-   * get_json 
+   * get_json
    * @return [Hash] search result "json like"
    */
   public function get_json($q) {
@@ -223,11 +229,11 @@ class SerpApiSearch {
   }
 
   /***
-   * Get location using Location API 
+   * Get location using Location API
    */
   function get_location($q, $limit) {
     $query = [
-      'q' => $q, 
+      'q' => $q,
       'limit' => $limit
     ];
     return $this->query("/locations.json", 'json', $query);
@@ -260,7 +266,7 @@ class SerpApiSearch {
     if($this->api_key == NULL) {
       throw new SerpApiSearchException("serp_api_key must be defined either in the constructor or by the method set_serp_api_key");
     }
-    
+
     $api = new RestClient([
         'base_url' => "https://serpapi.com",
         'user_agent' => 'google-search-results-php/1.3.0',
@@ -289,16 +295,16 @@ class SerpApiSearch {
       // json response
       return $result->decode_response();
     }
-    
+
     if($result->info->http_code == 400 && $output == 'json')
     {
       $error = $result->decode_response();
       $msg = $error->error;
       throw new SerpApiSearchException($msg);
     }
-    
+
     throw new SerpApiSearchException("Unexpected exception: $result->response");
   }
-  
+
 }
 
